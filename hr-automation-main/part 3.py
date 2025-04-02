@@ -13,7 +13,7 @@ from calendar import month_name
 emp_table = r"C:\Users\alexandru.dobre\OneDrive - Brillio\Desktop\Internship files\Project\BI projects\Automation tool_myself\hr-automation-main\Employees.xlsx"
 PTO_table = r"C:\Users\alexandru.dobre\OneDrive - Brillio\Desktop\Internship files\Project\BI projects\Automation tool_myself\hr-automation-main\PTO.xlsx"
 output_file = r"C:\Users\alexandru.dobre\OneDrive - Brillio\Desktop\Internship files\Project\BI projects\Automation tool_myself\hr-automation-main\Pontaj.xlsx"
-
+holidays_file = r"C:\Users\alexandru.dobre\OneDrive - Brillio\Desktop\Internship files\Project\BI projects\Automation tool_myself\hr-automation-main\Holiday_table.xlsx"
 
 # Read Employee table
 df = pd.read_excel(emp_table, sheet_name='Sheet1')
@@ -43,6 +43,7 @@ month = 2#TODO: DE SCOS DE AICI CA E PENTRU TEST
 start_date = datetime(year, month, 1)  # first day 
 
 
+
 # last day (accounts for leap years)
 if month == 12:
     end_date = datetime(year + 1, 1, 1) - timedelta(days=1)
@@ -57,10 +58,8 @@ attendance_data = pd.DataFrame(columns=["Employee_Info"] + dates)
 
 
 # Get all legal vacation days 
-api_url = "https://zilelibere.webventure.ro/api/2025"
-response = requests.get(api_url)
-holidays_data = response.json()
-holiday_dates = [holiday_date["date"] for holiday in holidays_data for holiday_date in holiday["date"]]
+holidays_data = pd.read_excel(holidays_file)
+holiday_dates = holidays_data["date"]
 
 
 # Convert legal vacation days to datetime and filter for the selected month
@@ -145,7 +144,7 @@ for _, row in pto.iterrows():
 
 
 # ADAUGAREA DE DATE IN EXCEL
-print("Start adding employee data.")
+print(f"{"\u23F3"} Start adding employee data.\n")
 
 # Fill attendance data
 data_rows = []
@@ -211,7 +210,7 @@ attendance_data.columns = [""] + ["Employee_Info"] + dates
 with pd.ExcelWriter(output_file, engine="openpyxl") as writer:
     attendance_data.to_excel(writer, index=False, startrow=9)  # Headers start at row 10 (index 9)
 
-print("Finished adding data.")
+print(f"{"\u2705"} Finished adding data. \n")
 
 
 # Load Excel file for formatting
@@ -224,7 +223,7 @@ ws = wb.active
 
 
 # FORMATARE DE DATE
-print("Start formatting base table.")
+print(f"{"\u23F3"} Start formatting base table. \n")
 
 
 #freeze the first 10 rows
@@ -418,7 +417,7 @@ ws["U7"].font = Font(size=12, bold=True)
 ws.merge_cells("U7:V7")
 
 
-print("Format base table done.")
+print(f"{"\u2705"} Format base table done.\n")
 # print(f"Format done. File saved in: {output_file}")
 
 
@@ -427,7 +426,7 @@ print("Format base table done.")
 
 
 # PART 3: Add the calculation table
-print("Adding calculation table")
+print(f"{"\u23F3"} Start adding calculation table\n")
 
 
 # Define the headers for row 9 - max col. nr +5 
@@ -511,10 +510,7 @@ for i in range(start_index, end_index):
         # Move down 3 rows for the next insertion
         start_row += 3
 
-
-
-
-# size headers, subheaders and cells based on example
+# Format headers, subheaders and cells based 
 for row in ws.iter_rows(min_row=9, max_row=max_Rows, min_col=last_column+1): # format cells
     if row[0].row < 10:
         for cell in row:
@@ -533,4 +529,4 @@ for row in ws.iter_rows(min_row=9, max_row=max_Rows, min_col=last_column+1): # f
 # Save the modified workbook
 wb.save(output_file)
 
-print("Modification done. File saved")
+print(f"{"\u2705"} Modification done. File saved")
