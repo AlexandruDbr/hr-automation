@@ -431,7 +431,7 @@ print(f"{"\u23F3"} Start adding calculation table\n")
 
 # Define the headers for row 9 - max col. nr +5 
 row_9_headers = [
-    "Total ore lucrate", "din care :", "", "Total ore lucrate", "Total zile lucrate"
+    "Total ore lucrate", "din care:", "", "Total ore lucrate", "Total zile lucrate"
 ]
 
 # Find the last column by checking the maximum column index
@@ -503,20 +503,28 @@ for i in range(start_index, end_index):
 
         # Get the formula according to the column nr.
         formula = formulas[str(i)]
+        
 
-        # Insert the formula into the correct column and row
-        ws[f"{current_col_name}{start_row}"] = formula
-
+        # Check if start row smaller than max rows, 
+        # Insert the formula into the correct column and row 
         # Move down 3 rows for the next insertion
-        start_row += 3
+        if start_row <= max_Rows:
+            ws[f"{current_col_name}{start_row}"] = formula
+            start_row += 3
 
 # Format headers, subheaders and cells based 
 for row in ws.iter_rows(min_row=9, max_row=max_Rows, min_col=last_column+1): # format cells
-    if row[0].row < 10:
+    if row[0].row < 10: #format row 10 and upward
         for cell in row:
-            cell.font = Font(name="Arial", size=8)
-            cell.border = Border(left=Side(style="thin"), right=Side(style="thin"), top=Side(style="thin"), bottom=Side(style="thin"))
-    elif row[0].row < 11:
+            if cell.value in ["Total ore lucrate", "Total zile lucrate"]:
+
+                cell.font = Font(name="Arial", size=8, bold=True)
+                cell.border = Border(left=Side(style="thin"), right=Side(style="thin"), top=Side(style="thin"), bottom=Side(style="thin"))
+            else:
+                for cell in row:
+                    cell.font = Font(name="Arial", size=8)
+                    cell.border = Border(left=Side(style="thin"), right=Side(style="thin"), top=Side(style="thin"), bottom=Side(style="thin"))
+    elif row[0].row == 10: #format row 11 
         for cell in row:
             cell.font = Font(name="Arial", size=7, bold=True)
             cell.border = Border(left=Side(style="thin"), right=Side(style="thin"), top=Side(style="thin"), bottom=Side(style="thin"))
@@ -526,7 +534,28 @@ for row in ws.iter_rows(min_row=9, max_row=max_Rows, min_col=last_column+1): # f
             cell.border = Border(left=Side(style="thin"), right=Side(style="thin"), top=Side(style="thin"), bottom=Side(style="thin"))
 
 
+# format first col in calculation table
+for row in ws.iter_rows(min_row=13, max_row=max_Rows, min_col=last_column+1, max_col=last_column+1):
+    for cell in row:
+        cell.font = Font(name="Arial", size=10, bold=True) 
+
+# format 'Total ore lucrate' col
+def add_bottom_border():
+    start_r = start_row
+    for row in ws.iter_rows(min_row=start_r, max_row=max_Rows, min_col=last_column+4, max_col=last_column+4):
+        for cell in row:
+            cell.border = Border(left=Side(style="thin"), right=Side(style="thin"), top=Side(style="thin"), bottom=Side(style="thick"))
+        start_r +=3
+
+add_bottom_border()
+
+# format CO sums  
+for row in ws.iter_rows(min_row=13, max_row=max_Rows, min_col=last_column+6):
+    for cell in row:
+        cell.font = Font(name="Arial", size=10, bold=True)
+
+
+
 # Save the modified workbook
 wb.save(output_file)
-
 print(f"{"\u2705"} Modification done. File saved")
