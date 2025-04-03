@@ -1,9 +1,0 @@
-To do 21-23 feb:
-
-	Add the table after the last column
-
-	Add the formula in the first column of the table, 3rd row. Then, increment by 3.
-
-	Finish Databricks course
-
-Make the s
