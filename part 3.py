@@ -9,11 +9,15 @@ from calendar import month_name
 
 
 
+# Insert your data source here
+#replace <root_folder> with your file path. 
 
-emp_table = r"C:\Users\alexandru.dobre\OneDrive - Brillio\Desktop\Internship files\Project\BI projects\Automation tool_myself\hr-automation-main\Employees.xlsx"
-PTO_table = r"C:\Users\alexandru.dobre\OneDrive - Brillio\Desktop\Internship files\Project\BI projects\Automation tool_myself\hr-automation-main\PTO.xlsx"
-output_file = r"C:\Users\alexandru.dobre\OneDrive - Brillio\Desktop\Internship files\Project\BI projects\Automation tool_myself\hr-automation-main\Pontaj.xlsx"
-holidays_file = r"C:\Users\alexandru.dobre\OneDrive - Brillio\Desktop\Internship files\Project\BI projects\Automation tool_myself\hr-automation-main\Holiday_table.xlsx"
+emp_table = r"<root_folder>\Employees.xlsx" 
+PTO_table = r"<root_folder>\PTO.xlsx"
+output_file = r"<root_folder>\Pontaj.xlsx"
+holidays_file = r"<root_folder>\Holiday_table.xlsx"
+
+
 
 # Read Employee table
 df = pd.read_excel(emp_table, sheet_name='Sheet1')
@@ -538,6 +542,7 @@ for row in ws.iter_rows(min_row=9, max_row=max_Rows, min_col=last_column+1): # f
 for row in ws.iter_rows(min_row=13, max_row=max_Rows, min_col=last_column+1, max_col=last_column+1):
     for cell in row:
         cell.font = Font(name="Arial", size=10, bold=True) 
+
 
 # format 'Total ore lucrate' col
 def add_bottom_border():
